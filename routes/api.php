@@ -16,25 +16,20 @@ use App\Http\Controllers\LoginController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register web routes for your application. These
+| Here is where you can register API routes for your application. These
 | routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
+| be assigned to the "api" middleware group. Make something great!
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+    return $request->user();
 });
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-
-Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware(['auth', 'encargado'])->group(function () {
     Route::get('/encargado', [EncargadoController::class, 'index'])->name('encargado.home');
@@ -60,3 +55,17 @@ Route::middleware(['auth', 'vendedor'])->group(function () {
     Route::get('/vendedor', [VendedorController::class, 'index'])->name('vendedor.home');
     // Aquí puedes definir otras rutas específicas para el rol de Vendedor
 });
+
+
+Route::get('/categorias', [CategoriaController::class, 'index']);
+Route::get('/productos', [ProductoController::class, 'index']);
+Route::get('/productos/{producto}', [ProductoController::class, 'show']);
+
+
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+
+Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth:sanctum');
+
+
+
