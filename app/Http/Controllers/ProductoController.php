@@ -250,16 +250,15 @@ public function kardex($id)
     // Obtener todas las transacciones asociadas con el producto
     $transacciones = $producto->transacciones;
 
+    // Contar el número de preguntas realizadas sobre el producto
+    $numPreguntas = $producto->preguntas()->count();
+
+    // Contar el número de personas que han comprado el producto
+    $numCompras = $transacciones->where('comprado', true)->count();
+
     // Retornar la vista con el Kardex del producto y sus transacciones
-    return view('kardex', compact('producto', 'transacciones'));
+    return view('kardex', compact('producto', 'transacciones', 'numPreguntas', 'numCompras'));
 }
-
-public function comprar(Producto $producto)
-{
-    $rol = Auth::user()->rol;
-    return view('comprarProdcutos', compact('producto', 'rol'));
-}
-
 public function realizarCompra(Request $request, Producto $producto)
 {
     // Obtener el usuario actual
