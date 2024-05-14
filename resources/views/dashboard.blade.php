@@ -1,29 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tablero</title>
-</head>
-<body>
-    <h1>Informes</h1>
+@extends('layouts.app')
 
-    <div>
-        <h2>Usuarios Registrados</h2>
-        <p>Total: {{ $totalUsuarios }}</p>
+@section('content')
+<div class="container mt-5">
+    <h1 class="mb-4">Informes</h1>
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <h2 class="card-title">Usuarios Registrados</h2>
+            <p class="card-text">Total: {{ $totalUsuarios }}</p>
+        </div>
     </div>
 
-    <div>
-        <h2>Transacciones</h2>
-        <p>Total: {{ $totalTransacciones }}</p>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h2 class="card-title">Transacciones</h2>
+            <p class="card-text">Total: {{ $totalTransacciones }}</p>
+        </div>
     </div>
 
-    <div>
-        <h2>Productos no Consignados</h2>
-        <p>Total: {{ $totalProductosNoConsignados }}</p>
+    <div class="card mb-3">
+        <div class="card-body">
+            <h2 class="card-title">Productos no Consignados</h2>
+            <p class="card-text">Total: {{ $totalProductosNoConsignados }}</p>
+        </div>
     </div>
-    <br>
-    <br>
-    <a href="{{ route($rol.'.home') }}">Regresar al Home del {{ ucfirst($rol) }}</a>
-</body>
-</html>
+
+    <a href="{{ route($rol.'.home') }}" class="btn btn-secondary mt-4">Regresar al Home del {{ ucfirst($rol) }}</a>
+</div>
+@endsection

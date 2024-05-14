@@ -24,9 +24,7 @@
                         <a href="{{ route('Encargado.usuarios') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-people me-2"></i> Ver Usuarios
                         </a>
-                        <a href="{{ route('login') }}" class="list-group-item list-group-item-action d-flex align-items-center">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                        </a>
+                       
                     </div>
                 </div>
             </div>

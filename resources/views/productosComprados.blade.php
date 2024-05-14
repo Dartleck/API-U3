@@ -1,6 +1,11 @@
+@extends('layouts.app')
+
+@section('content')
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos Comprados</title>
@@ -12,42 +17,48 @@
             padding-bottom: 10px; /* Espacio interno inferior */
         }
     </style>
+    
 </head>
 <body>
-    <h1>Productos Comprados</h1>
 
-    {{-- Verificar si hay productos comprados --}}
-    @if ($productosComprados->isNotEmpty())
-        {{-- Inicializar el gasto total --}}
-        @php
-            $totalGasto = 0;
-        @endphp
+    <a href="{{ route('Cliente.home') }}" class="btn btn-secondary mt-3">Volver</a>
 
-        {{-- Iterar sobre los productos comprados --}}
-        @foreach($productosComprados as $producto)
-            {{-- Calcular el gasto total por este producto --}}
+    <div class="container">
+        <h1 class="my-4">Productos Comprados</h1>
+
+        {{-- Verificar si hay productos comprados --}}
+        @if ($productosComprados->isNotEmpty())
+            {{-- Inicializar el gasto total --}}
             @php
-                $gastoProducto = $cantidadProductos[$producto->id] * $producto->price;
-                $totalGasto += $gastoProducto;
+                $totalGasto = 0;
             @endphp
 
-            {{-- Mostrar detalles del producto --}}
-            <div class="producto">
-                <p><strong>Nombre:</strong> {{ $producto->name }}</p>
-                <p><strong>Descripción:</strong> {{ $producto->description }}</p>
-                <p><strong>Precio:</strong> ${{ number_format($producto->price, 2, '.', ',') }}</p>
-                <p><strong>Cantidad de productos comprados:</strong> {{ $cantidadProductos[$producto->id] }}</p>
-                <p><strong>Gasto total por este producto:</strong> ${{ number_format($gastoProducto, 2, '.', ',') }}</p>
-            </div>
-        @endforeach
+            {{-- Iterar sobre los productos comprados --}}
+            @foreach($productosComprados as $producto)
+                {{-- Calcular el gasto total por este producto --}}
+                @php
+                    $gastoProducto = $cantidadProductos[$producto->id] * $producto->price;
+                    $totalGasto += $gastoProducto;
+                @endphp
 
-        {{-- Mostrar el gasto total acumulado --}}
-        <h2>Gasto Total: ${{ number_format($totalGasto, 2, '.', ',') }}</h2>
+                {{-- Mostrar detalles del producto --}}
+                <div class="producto">
+                    <p><strong>Nombre:</strong> {{ $producto->name }}</p>
+                    <p><strong>Descripción:</strong> {{ $producto->description }}</p>
+                    <p><strong>Precio:</strong> ${{ number_format($producto->price, 2, '.', ',') }}</p>
+                    <p><strong>Cantidad de productos comprados:</strong> {{ $cantidadProductos[$producto->id] }}</p>
+                    <p><strong>Gasto total por este producto:</strong> ${{ number_format($gastoProducto, 2, '.', ',') }}</p>
+                </div>
+            @endforeach
 
-    @else
-        <p>No hay productos comprados.</p>
-    @endif
+            {{-- Mostrar el gasto total acumulado --}}
+            <h2>Gasto Total: ${{ number_format($totalGasto, 2, '.', ',') }}</h2>
 
-    <a href="{{ route('Cliente.home') }}">Volver</a>
+        @else
+            <p>No hay productos comprados.</p>
+        @endif
+
+    </div>
 </body>
 </html>
+@endsection

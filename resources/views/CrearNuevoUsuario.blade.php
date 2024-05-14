@@ -1,34 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Nuevo Usuario</title>
-</head>
-<body>
-    <h1>Crear Nuevo Usuario</h1>
+@extends('layouts.app')
+
+@section('content')
+<div class="container mt-5">
+    <h1 class="mb-4">Crear Nuevo Usuario</h1>
 
     <form method="POST" action="{{ route('Supervisor.usuarios.store') }}">
         @csrf
 
-        <div>
+        <div class="form-group">
             <label for="name">Nombre:</label>
-            <input type="text" name="name" id="name" required>
+            <input type="text" name="name" id="name" class="form-control" required>
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="email">Correo Electrónico:</label>
-            <input type="email" name="email" id="email" required>
+            <input type="email" name="email" id="email" class="form-control" required>
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="password">Contraseña:</label>
-            <input type="password" name="password" id="password" required>
+            <input type="password" name="password" id="password" class="form-control" required>
         </div>
 
-        <div>
+        <div class="form-group">
             <label for="rol">Rol:</label>
-            <select name="rol" id="rol">
+            <select name="rol" id="rol" class="form-control">
                 <option value="supervisor">Supervisor</option>
                 <option value="encargado">Encargado</option>
                 <option value="cliente">Cliente</option>
@@ -38,7 +34,17 @@
             </select>
         </div>
 
-        <button type="submit">Crear Usuario</button>
+        <button type="submit" class="btn btn-primary mt-3">Crear Usuario</button>
+
+        @if ($errors->any())
+            <div class="alert alert-danger mt-3">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </form>
-</body>
-</html>
+</div>
+@endsection

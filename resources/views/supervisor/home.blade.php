@@ -1,4 +1,4 @@
-@extends('app')
+@extends('layouts.app')
 
 @section('content')
 <!DOCTYPE html>
@@ -39,9 +39,7 @@
                         <a href="{{ route('Supervisor.dashboard') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-bar-chart me-2"></i> Dashboard Informe
                         </a>
-                        <a href="{{ route('login') }}" class="list-group-item list-group-item-action d-flex align-items-center">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                        </a>
+                        
                     </div>
                 </div>
             </div>

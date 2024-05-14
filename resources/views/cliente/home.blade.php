@@ -1,4 +1,4 @@
-@extends('app')
+@extends('layouts.app')
 
 @section('content')
 <!DOCTYPE html>
@@ -24,9 +24,7 @@
                         <a href="{{ route('Cliente.productos.comprados') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-cart-check me-2"></i> Mis Productos
                         </a>
-                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action d-flex align-items-center">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                        </a>
+                        
                     </div>
                 </div>
             </div>

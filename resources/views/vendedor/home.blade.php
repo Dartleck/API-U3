@@ -30,9 +30,7 @@
                         <a href="{{ route('Vendedor.productos_comprados') }}" class="list-group-item list-group-item-action d-flex align-items-center">
                             <i class="bi bi-bag-check me-2"></i> Productos Comprados
                         </a>
-                        <a href="{{ route('logout') }}" class="list-group-item list-group-item-action d-flex align-items-center">
-                            <i class="bi bi-box-arrow-right me-2"></i> Logout
-                        </a>
+                       
                     </div>
                 </div>
             </div>

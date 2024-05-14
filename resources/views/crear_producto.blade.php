@@ -1,50 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Nuevo Producto</title>
-</head>
-<body>
-    <h1>Crear Nuevo Producto</h1>
+@extends('layouts.app')
+
+@section('content')
+<div class="container mt-5">
+    <h1 class="mb-4">Crear Nuevo Producto</h1>
 
     <form action="{{ route($rol . '.productos.store') }}" method="POST">
         @csrf
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required><br><br>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" class="form-control" required>
+        </div>
 
-        <label for="descripcion">Descripción:</label><br>
-        <textarea id="descripcion" name="descripcion" rows="4" cols="50" required></textarea><br><br>
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <textarea id="descripcion" name="descripcion" rows="4" class="form-control" required></textarea>
+        </div>
 
-        <label for="precio">Precio:</label>
-        <input type="number" id="precio" name="precio" step="0.01" required><br><br>
+        <div class="form-group">
+            <label for="precio">Precio:</label>
+            <input type="number" id="precio" name="precio" step="0.01" class="form-control" required>
+        </div>
 
-        <label for="stock">Stock:</label>
-        <input type="number" id="stock" name="stock" required><br><br>
+        <div class="form-group">
+            <label for="stock">Stock:</label>
+            <input type="number" id="stock" name="stock" class="form-control" required>
+        </div>
 
-        <label for="confirmado">Estado:</label>
-        <select id="confirmado" name="state" required>
-        <option value="pendiente" @if($producto->state == 'pendiente') selected @endif>Pendiente</option>
-        </select><br><br>
-        <label for="categoria_id">Categoría:</label>
-        <select id="categoria_id" name="categoria_id" required>
-            <!-- Iterar sobre las categorías disponibles -->
-            @foreach($categorias as $categoria)
-                <option value="{{ $categoria->id }}">{{ $categoria->name }}</option>
-            @endforeach
-        </select><br><br>
+        <div class="form-group">
+            <label for="state">Estado:</label>
+            <select id="state" name="state" class="form-control" required>
+                <option value="pendiente" @if(old('state') == 'pendiente') selected @endif>Pendiente</option>
+            </select>
+        </div>
 
-        <button type="submit">Guardar Producto</button>
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
-        
+        <div class="form-group">
+            <label for="categoria_id">Categoría:</label>
+            <select id="categoria_id" name="categoria_id" class="form-control" required>
+                @foreach($categorias as $categoria)
+                    <option value="{{ $categoria->id }}">{{ $categoria->name }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Guardar Producto</button>
+
+        @if ($errors->any())
+            <div class="alert alert-danger mt-3">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
     </form>
-</body>
-</html>
+</div>
+@endsection
