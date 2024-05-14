@@ -149,6 +149,8 @@ Route::middleware(['auth', 'vendedor'])->group(function () {
     Route::delete('/vendedor/productos/{producto}', [ProductoController::class, 'destroy'])->name('Vendedor.productos.destroy');
     //Dashboard
 
+    Route::get('/vendedor/productos_comprados', [VendedorController::class, 'productosComprados'])->name('Vendedor.productos_comprados');
+
     Route::prefix('preguntas')->group(function () {
         Route::post('/crearPregunta/{productoId}', [PreguntaController::class, 'crearPregunta'])->name('Vendedor.preguntas.store');
         Route::get('/producto/{producto}', [PreguntaController::class, 'obtenerPreguntas'])->name('Vendedor.preguntas.index');

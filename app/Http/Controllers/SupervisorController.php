@@ -17,13 +17,13 @@ class SupervisorController extends Controller
         return view('supervisor.home', ['supervisor' => $supervisor]);
     }
 
-    public function VendedorHistorial(User $vendedor)
+    public function vendedorHistorial($id)
     {
-        // Obtener las transacciones asociadas al vendedor
-        $transacciones = $vendedor->transacciones;
-    
-        // Retornar vista con el historial del vendedor y sus transacciones
-        return view('historial_vendedor', ['vendedor' => $vendedor, 'transacciones' => $transacciones]);
+        $vendedor = User::findOrFail($id);
+        $transacciones = $vendedor->transacciones()->with('producto')->get();
+        $productos = $vendedor->productos;
+
+        return view('supervisor.vendedor.historial', compact('vendedor', 'transacciones', 'productos'));
     }
     
 
