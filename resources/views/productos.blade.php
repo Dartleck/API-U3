@@ -41,7 +41,17 @@
                                 <p class="card-text">{{ $producto->description }}</p>
                                 <p class="card-text">Precio: ${{ number_format($producto->price, 2, '.', ',') }}</p>
                                 <p class="card-text">Stock: {{ $producto->stock }}</p>
-
+                                <strong>Nombre:</strong> {{ $producto->name }}<br>
+                                <strong>Descripción:</strong> {{ $producto->description }}<br>
+                                <strong>Precio:</strong> ${{ number_format($producto->price, 2, '.', ',') }}<br>
+                                <strong>Stock:</strong> {{ $producto->stock }}<br>
+                                @if($rol === 'Supervisor'|| ($rol === 'Encargado'))
+                                    <strong>Estado:</strong> {{ ucfirst($producto->state) }}<br>
+                                    @if($producto->state === 'rechazado')
+                                        <strong>Razón de rechazo:</strong> {{ $producto->razon_rechazo }}<br>
+                                    @endif
+                                @endif
+                                <strong>Vendedor:</strong> {{ $producto->user->name ?? 'Desconocido' }}<br>
                                 <!-- Enlace para editar el producto -->
                                 @can('edit', $producto)
                                     <a href="{{ route($rol.'.productos.edit', $producto->id) }}" class="btn btn-info">Editar</a>
