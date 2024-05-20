@@ -8,6 +8,9 @@ use App\Models\Categoria;
 use App\Models\Transaccion;
 use App\Models\Pregunta;
 use Illuminate\Support\Facades\Auth;
+use App\Models\FotoProducto;
+use Illuminate\Support\Facades\Storage;
+use App\Notifications\ProductoComprado;
 class ProductoController extends Controller
 {
 
@@ -21,10 +24,10 @@ class ProductoController extends Controller
     
         // Filtrar los productos por categoría si se selecciona una categoría
         if ($categoriaId) {
-            $productos = Producto::where('category_id', $categoriaId)->get();
+            $productos = Producto::where('category_id', $categoriaId)->with('fotos')->get();
         } else {
             // Obtener todos los productos si no se selecciona una categoría
-            $productos = Producto::all();
+            $productos = Producto::with('fotos')->get();
         }
     
         // Inicializar un array para almacenar las preguntas por producto
@@ -36,8 +39,9 @@ class ProductoController extends Controller
             $preguntasPorProducto[$producto->id] = $preguntas;
         }
     
-        return view('productosa', compact('categorias', 'productos', 'categoriaId', 'preguntasPorProducto','preguntas'));
+        return view('productosa', compact('categorias', 'productos', 'categoriaId', 'preguntasPorProducto'));
     }
+
 
     public function index(Request $request)
 {
@@ -69,36 +73,34 @@ class ProductoController extends Controller
 }
 
 public function misproductos(Request $request)
-{
-    // Obtener todas las categorías disponibles
-    $categorias = Categoria::all();
-    $usuario = Auth::user();
+    {
+        // Obtener todas las categorías disponibles
+        $categorias = Categoria::all();
+        $usuario = Auth::user();
+        $rol = $usuario->rol;
 
-    $rol = $usuario->rol;
+        // Obtener el ID de la categoría seleccionada (si existe)
+        $categoriaId = $request->input('categoria_id');
 
-    // Obtener el ID de la categoría seleccionada (si existe)
-    $categoriaId = $request->input('categoria_id');
+        // Filtrar los productos por categoría y por usuario si se selecciona una categoría
+        if ($categoriaId) {
+            $productos = Producto::where('category_id', $categoriaId)->where('user_id', $usuario->id)->with('fotos')->get();
+        } else {
+            // Obtener todos los productos del usuario si no se selecciona una categoría
+            $productos = Producto::where('user_id', $usuario->id)->with('fotos')->get();
+        }
 
-    // Filtrar los productos por categoría y por usuario si se selecciona una categoría
-    if ($categoriaId) {
-        $productos = Producto::where('category_id', $categoriaId)->where('user_id', $usuario->id)->get();
-        
-    } else {
-        // Obtener todos los productos del usuario si no se selecciona una categoría
-        $productos = Producto::where('user_id', $usuario->id)->get();
+        // Inicializar un array para almacenar las preguntas por producto
+        $preguntasPorProducto = [];
+
+        // Obtener las preguntas para cada producto y almacenarlas en el array asociativo
+        foreach ($productos as $producto) {
+            $preguntas = Pregunta::where('producto_id', $producto->id)->with('respuestas')->get();
+            $preguntasPorProducto[$producto->id] = $preguntas;
+        }
+
+        return view('productosv', compact('categorias', 'rol', 'productos', 'categoriaId', 'preguntasPorProducto'));
     }
-
-    // Inicializar un array para almacenar las preguntas por producto
-    $preguntasPorProducto = [];
-
-    // Obtener las preguntas para cada producto y almacenarlas en el array asociativo
-    foreach ($productos as $producto) {
-        $preguntas = Pregunta::where('producto_id', $producto->id)->with('respuestas')->get();
-        $preguntasPorProducto[$producto->id] = $preguntas;
-    }
-
-    return view('productosv', compact('categorias', 'rol', 'productos', 'categoriaId', 'preguntasPorProducto'));
-}
 
     
     
@@ -261,29 +263,43 @@ public function kardex($id)
 }
 public function realizarCompra(Request $request, Producto $producto)
 {
-    // Obtener el usuario actual
     $user = Auth::user();
 
-    // Validar si la cantidad a comprar es mayor que el stock disponible
     if ($request->cantidad > $producto->stock) {
         return redirect()->back()->with('error', 'No hay suficiente stock disponible para esta compra.');
     }
 
-    // Crear una nueva transacción para registrar la compra
+    // Validar el formulario, incluyendo el archivo de voucher
+    $request->validate([
+        'cantidad' => 'required|integer|min:1|max:' . $producto->stock,
+        'voucher' => 'required|file|mimes:jpeg,png,pdf|max:2048', // Limitar el tipo de archivo y tamaño
+    ]);
+
+    // Manejar la subida del archivo
+    if ($request->hasFile('voucher')) {
+        $voucherPath = $request->file('voucher')->store('vouchers', 'public');
+    } else {
+        $voucherPath = null;
+    }
+
     $transaccion = new Transaccion();
     $transaccion->producto_id = $producto->id;
     $transaccion->user_id = $user->id;
     $transaccion->comprado = true;
-    $transaccion->cantidad = $request->cantidad; // Establecer la cantidad correctamente
+    $transaccion->cantidad = $request->cantidad;
+    $transaccion->voucher_path = $voucherPath; // Guardar la ruta del voucher
     $transaccion->save();
 
-    // Actualizar el stock del producto
     $producto->stock -= $request->cantidad;
     $producto->save();
 
-    // Redireccionar a la página de confirmación de compra o a donde sea necesario
+    // Enviar notificación al dueño del producto
+    $vendedor = $producto->vendedor;
+    $vendedor->notify(new ProductoComprado($producto, $user));
+
     return redirect()->route($user->rol . '.productos')->with('success', '¡Compra realizada con éxito!');
 }
+
 
 public function mostrarProductosComprados()
 {
@@ -313,6 +329,75 @@ public function mostrarProductosComprados()
     // Pasar las variables a la vista
     return view('productosComprados', compact('productosComprados', 'cantidadProductos', 'categorias'));
 }
+
+public function comprar(Producto $producto)
+{
+    $rol = Auth::user()->rol;
+    return view('comprarProdcutos', compact('producto', 'rol'));
+}
+
+public function calificarTransaccion(Request $request, Transaccion $transaccion)
+    {
+        // Validar la calificación
+        $request->validate([
+            'rating' => 'required|integer|min:1|max:5',
+        ]);
+
+        // Asegurarse de que el usuario actual sea el comprador de la transacción
+        if ($transaccion->user_id !== Auth::id()) {
+            return redirect()->back()->with('error', 'No tienes permiso para calificar esta transacción.');
+        }
+
+        // Guardar la calificación
+        $transaccion->rating = $request->rating;
+        $transaccion->save();
+
+        return redirect()->route('Cliente.productos.comprados')->with('success', 'Calificación guardada con éxito.');
+    }
+
+    public function agregarFoto(Request $request, Producto $producto)
+{
+    // Verificar que el producto no esté consignado
+    if ($producto->state === 'aceptado') {
+        return redirect()->back()->with('error', 'No puedes agregar fotos a un producto consignado.');
+    }
+
+    // Validar la foto
+    $request->validate([
+        'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+    ]);
+
+    // Guardar la foto
+    $ruta = $request->file('foto')->store('fotos_productos', 'public');
+
+    // Crear la relación en la base de datos
+    FotoProducto::create([
+        'producto_id' => $producto->id,
+        'ruta' => $ruta,
+    ]);
+
+    return redirect()->route('Vendedor.misproductos')->with('success', 'Foto agregada con éxito.');
+}
+
+// Método para eliminar una foto
+public function eliminarFoto(FotoProducto $foto)
+{
+    $producto = $foto->producto;
+
+    // Verificar que el producto no esté consignado
+    if ($producto->state === 'aceptado') {
+        return redirect()->back()->with('error', 'No puedes eliminar fotos de un producto consignado.');
+    }
+
+    // Eliminar la foto físicamente
+    Storage::disk('public')->delete($foto->ruta);
+
+    // Eliminar la relación en la base de datos
+    $foto->delete();
+
+    return redirect()->route('Vendedor.misproductos')->with('success', 'Foto eliminada con éxito.');
+}
+
 
 
 }

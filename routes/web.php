@@ -79,14 +79,30 @@ Route::middleware(['auth', 'cliente'])->group(function () {
     Route::get('/cliente/productos/{producto}/comprar', [ProductoController::class, 'comprar'])->name('Cliente.productos.comprar');
     Route::post('/cliente/productos/{producto}/comprar', [ProductoController::class, 'realizarCompra'])->name('Cliente.productos.realizarCompra');
     Route::get('/cliente/productos/comprados', [ProductoController::class, 'mostrarProductosComprados'])->name('Cliente.productos.comprados');
-
+    Route::post('/cliente/transacciones/{transaccion}/calificar', [ProductoController::class, 'calificarTransaccion'])->name('Cliente.transacciones.calificar');
     
 });
 
 Route::middleware(['auth', 'contador'])->group(function () {
     Route::get('/contador', [ContadorController::class, 'index'])->name('Contador.home');
-    // Aquí puedes definir otras rutas específicas para el rol de Contador
+    
+    // Ruta para ver las transacciones pendientes de validación
+    Route::get('/contador/transacciones', [ContadorController::class, 'transacciones'])->name('Contador.transacciones');
+    
+    // Ruta para validar una transacción
+    Route::post('/contador/transacciones/{transaccion}/validar', [ContadorController::class, 'validarTransaccion'])->name('Contador.transacciones.validar');
+    
+    // Ruta para rechazar una transacción
+    Route::post('/contador/transacciones/{transaccion}/rechazar', [ContadorController::class, 'rechazarTransaccion'])->name('Contador.transacciones.rechazar');
+    
+    // Ruta para la creación de pagos
+    Route::get('/contador/pago/crear', [ContadorController::class, 'crearPago'])->name('Contador.pago.crear');
+    Route::post('/contador/pago', [ContadorController::class, 'storePago'])->name('Contador.pago.store');
+    Route::get('/contador/pagos', [ContadorController::class, 'listarPagos'])->name('Contador.pagos'); // Nueva ruta
+    Route::put('/contador/pagos/{pago}/entregar', [ContadorController::class, 'marcarComoEntregado'])->name('Contador.pago.entregar');
 });
+
+
 
 Route::middleware(['auth', 'supervisor'])->group(function () {
     Route::get('/supervisor', [SupervisorController::class, 'index'])->name('Supervisor.home');
@@ -150,6 +166,8 @@ Route::middleware(['auth', 'vendedor'])->group(function () {
     //Dashboard
 
     Route::get('/vendedor/productos_comprados', [VendedorController::class, 'productosComprados'])->name('Vendedor.productos_comprados');
+    Route::post('/vendedor/productos/{producto}/foto', [ProductoController::class, 'agregarFoto'])->name('Vendedor.foto.agregar');
+    Route::delete('/vendedor/foto/{foto}', [ProductoController::class, 'eliminarFoto'])->name('Vendedor.foto.eliminar');
 
     Route::prefix('preguntas')->group(function () {
         Route::post('/crearPregunta/{productoId}', [PreguntaController::class, 'crearPregunta'])->name('Vendedor.preguntas.store');

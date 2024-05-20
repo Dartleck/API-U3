@@ -17,7 +17,6 @@
             padding-bottom: 10px; /* Espacio interno inferior */
         }
     </style>
-    
 </head>
 <body>
 
@@ -48,6 +47,24 @@
                     <p><strong>Precio:</strong> ${{ number_format($producto->price, 2, '.', ',') }}</p>
                     <p><strong>Cantidad de productos comprados:</strong> {{ $cantidadProductos[$producto->id] }}</p>
                     <p><strong>Gasto total por este producto:</strong> ${{ number_format($gastoProducto, 2, '.', ',') }}</p>
+
+                    {{-- Formulario para calificar la transacción --}}
+                    @foreach ($producto->transacciones as $transaccion)
+                        @if ($transaccion->comprado && $transaccion->user_id == Auth::id())
+                            <form action="{{ route('Cliente.transacciones.calificar', $transaccion->id) }}" method="POST">
+                                @csrf
+                                <label for="rating">Calificación:</label>
+                                <select name="rating" id="rating">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5">5</option>
+                                </select>
+                                <button type="submit">Calificar</button>
+                            </form>
+                        @endif
+                    @endforeach
                 </div>
             @endforeach
 
