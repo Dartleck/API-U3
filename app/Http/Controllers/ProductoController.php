@@ -18,65 +18,65 @@ class ProductoController extends Controller
     {
         // Obtener todas las categorías disponibles
         $categorias = Categoria::all();
-    
+
         // Obtener el ID de la categoría seleccionada (si existe)
         $categoriaId = $request->input('categoria_id');
-    
-        // Filtrar los productos por categoría si se selecciona una categoría
+
+        // Filtrar los productos por categoría y por estado "aceptado" si se selecciona una categoría
         if ($categoriaId) {
-            $productos = Producto::where('category_id', $categoriaId)->with('fotos')->get();
+            $productos = Producto::where('category_id', $categoriaId)->where('state', 'aceptado')->get();
         } else {
-            // Obtener todos los productos si no se selecciona una categoría
-            $productos = Producto::with('fotos')->get();
+            // Obtener todos los productos aceptados si no se selecciona una categoría
+            $productos = Producto::where('state', 'aceptado')->get();
         }
-    
+
         // Inicializar un array para almacenar las preguntas por producto
         $preguntasPorProducto = [];
-    
+
         // Obtener las preguntas para cada producto y almacenarlas en el array asociativo
         foreach ($productos as $producto) {
             $preguntas = Pregunta::where('producto_id', $producto->id)->with('respuestas')->get();
             $preguntasPorProducto[$producto->id] = $preguntas;
         }
-    
+
         return view('productosa', compact('categorias', 'productos', 'categoriaId', 'preguntasPorProducto'));
     }
 
-
     public function index(Request $request)
-{
-    // Obtener todas las categorías disponibles
-    $categorias = Categoria::all();
-    $rol = Auth::user()->rol;
+    {
+        // Obtener todas las categorías disponibles
+        $categorias = Categoria::all();
+        $rol = Auth::user()->rol;
 
-    // Obtener el ID de la categoría seleccionada (si existe)
-    $categoriaId = $request->input('categoria_id');
+        // Obtener el ID de la categoría seleccionada (si existe)
+        $categoriaId = $request->input('categoria_id');
 
-    // Filtrar los productos por categoría si se selecciona una categoría
-    if ($categoriaId) {
-        $productos = Producto::where('category_id', $categoriaId)->get();
-    } else {
-        // Obtener todos los productos si no se selecciona una categoría
-        $productos = Producto::all();
+        // Filtrar los productos por categoría y por estado "aceptado" si se selecciona una categoría
+        if ($categoriaId) {
+            $productos = Producto::where('category_id', $categoriaId)->where('state', 'aceptado')->get();
+        } else {
+            // Obtener todos los productos aceptados si no se selecciona una categoría
+            $productos = Producto::where('state', 'aceptado')->get();
+        }
+
+        // Inicializar un array para almacenar las preguntas por producto
+        $preguntasPorProducto = [];
+
+        // Obtener las preguntas para cada producto y almacenarlas en el array asociativo
+        foreach ($productos as $producto) {
+            $preguntas = Pregunta::where('producto_id', $producto->id)->with('respuestas')->get();
+            $preguntasPorProducto[$producto->id] = $preguntas;
+        }
+
+        return view('productos', compact('categorias', 'rol', 'productos', 'categoriaId', 'preguntasPorProducto'));
     }
 
-    // Inicializar un array para almacenar las preguntas por producto
-    $preguntasPorProducto = [];
-
-    // Obtener las preguntas para cada producto y almacenarlas en el array asociativo
-    foreach ($productos as $producto) {
-        $preguntas = Pregunta::where('producto_id', $producto->id)->with('respuestas')->get();
-        $preguntasPorProducto[$producto->id] = $preguntas;
-    }
-
-    return view('productos', compact('categorias', 'rol', 'productos', 'categoriaId', 'preguntasPorProducto','preguntas'));
-}
-
-public function misproductos(Request $request)
+    public function misproductos(Request $request)
     {
         // Obtener todas las categorías disponibles
         $categorias = Categoria::all();
         $usuario = Auth::user();
+
         $rol = $usuario->rol;
 
         // Obtener el ID de la categoría seleccionada (si existe)
@@ -84,10 +84,10 @@ public function misproductos(Request $request)
 
         // Filtrar los productos por categoría y por usuario si se selecciona una categoría
         if ($categoriaId) {
-            $productos = Producto::where('category_id', $categoriaId)->where('user_id', $usuario->id)->with('fotos')->get();
+            $productos = Producto::where('category_id', $categoriaId)->where('user_id', $usuario->id)->get();
         } else {
             // Obtener todos los productos del usuario si no se selecciona una categoría
-            $productos = Producto::where('user_id', $usuario->id)->with('fotos')->get();
+            $productos = Producto::where('user_id', $usuario->id)->get();
         }
 
         // Inicializar un array para almacenar las preguntas por producto
