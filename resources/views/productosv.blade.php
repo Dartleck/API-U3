@@ -67,8 +67,41 @@
                                             </form>
 
                                             <!-- Enlaces para ver y hacer preguntas -->
-                                            <a href="{{ route('Vendedor.preguntas.index', $producto->id) }}" class="btn btn-secondary mt-2">Ver Preguntas</a>
-                                            <a href="{{ route('Vendedor.preguntas.store', $producto->id) }}" class="btn btn-secondary mt-2">Hacer Pregunta</a>
+                                            <div class="form-group">
+                                                <button class="accordion">Preguntas y Respuestas</button>
+                                                <div class="form-group">
+                                                    @if(isset($preguntasPorProducto[$producto->id]) && $preguntasPorProducto[$producto->id]->count() > 0)
+                                                        <ul>
+                                                            @foreach($preguntasPorProducto[$producto->id] as $pregunta)
+                                                                <li>
+                                                                    <strong>Pregunta:</strong> {{ $pregunta->contenido }}
+                                                                    
+                                                                    <!-- Formulario para responder la pregunta -->
+                                                            <form action="{{ route($rol.'.respuestas.store', $pregunta->id) }}" method="POST">
+                                                                @csrf
+                                                                <textarea name="contenido" rows="3" cols="50" required></textarea><br>
+                                                                <button type="submit">Responder</button>
+                                                            </form>
+                                                                    <ul>
+                                                                        @if($pregunta->respuestas !== null && $pregunta->respuestas->count() > 0)
+                                                                            @foreach($pregunta->respuestas as $respuesta)
+                                                                                <li>
+                                                                                    <strong>Respuesta:</strong> {{ $respuesta->contenido }}
+                                                                                </li>
+                                                                            @endforeach
+                                                                        @else
+                                                                            <li>No hay respuestas para esta pregunta.</li>
+                                                                        @endif
+                                                                    </ul>
+                                                                </li>
+                                                            @endforeach
+                                                        </ul>
+                                                    @else
+                                                        <p>No hay preguntas para este producto.</p>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                            <a href="{{ route($rol.'.preguntas.index', $producto->id) }}" class="btn btn-secondary mt-2">Hacer una pregunta</a>
                                         </div>
                                     </div>
                                 </div>
