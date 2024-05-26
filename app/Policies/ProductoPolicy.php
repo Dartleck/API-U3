@@ -50,6 +50,13 @@ public function comprar(User $user){
 
 }
 
+public function viewState(User $user)
+{
+    // Solo permite ver el estado del producto si el usuario es un supervisor o un encargado
+    return $user->rol === 'Supervisor' || $user->rol === 'Encargado'|| $user->rol === 'Vendedor' ;
+}
+
+
 
 }
 

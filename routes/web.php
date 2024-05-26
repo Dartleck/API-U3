@@ -61,6 +61,8 @@ Route::middleware(['auth', 'encargado'])->group(function () {
 });
 
 
+Route::post('crearPregunta/{productoId}', [PreguntaController::class, 'crearPregunta'])->name('crearPregunta');
+//Route::get('crearPregunta/{productoId}', [PreguntaController::class, 'crearPregunta'])->name('crearPregunta');
 
 Route::get('/buscar', [ProductoController::class, 'anonimo'])->name('productos');
 

@@ -1,21 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enviar Pregunta</title>
-</head>
-<body>
-    <h1>Enviar Pregunta</h1>
+@extends('layouts.app')
 
-    <form action="{{ route($rol.'.preguntas.store', $producto->id) }}" method="POST">
-        
-        @csrf
-
-        <label for="contenido">Haz una pregunta sobre este producto:</label><br>
-        <textarea id="contenido" name="contenido" rows="4" cols="50" required></textarea><br><br>
-
-        <button type="submit">Enviar Pregunta</button>
-    </form>
-</body>
-</html>
+@section('content')
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h3 class="card-title">Enviar Pregunta</h3>
+        </div>
+        <div class="card-body">
+            <form action="{{ route($rol.'.preguntas.store', $producto->id) }}" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label for="contenido">Haz una pregunta sobre este producto:</label>
+                    <textarea id="contenido" name="contenido" rows="4" class="form-control" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Pregunta</button>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
