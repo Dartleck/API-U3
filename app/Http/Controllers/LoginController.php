@@ -36,23 +36,24 @@ class LoginController extends Controller
     $userRole = strtolower($user->rol);
    // dd($userRole);
     if ($userRole === 'encargado') { 
-        return redirect(route('encargado.home'));
+        return redirect(route('Encargado.home'));
     } elseif ($userRole === 'cliente') {
-        return redirect(route('cliente.home'));
+        return redirect(route('Cliente.home'));
     } elseif ($userRole === 'contador') {
-        return redirect(route('contador.home'));
+        return redirect(route('Contador.home'));
     } elseif ($userRole === 'supervisor') {
-        return redirect(route('supervisor.home'));
+        return redirect(route('Supervisor.home'));
     } elseif ($userRole === 'vendedor') {
-        return redirect(route('vendedor.home'));
+        return redirect(route('Vendedor.home'));
     } else {
         return redirect(route('login')); // Cambiado a 'login' en lugar de 'showLogin'
     }
 }
 
     
-    public function logout(Request $request)
-    {
-        // Lógica para cerrar sesión
-    }
+public function logout()
+{
+    Auth::logout();
+    return redirect('/login');
+}
 }

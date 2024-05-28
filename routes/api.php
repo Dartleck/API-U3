@@ -33,6 +33,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware(['auth', 'encargado'])->group(function () {
     Route::get('/encargado', [EncargadoController::class, 'index'])->name('encargado.home');
+    
     // Aquí puedes definir otras rutas específicas para el rol de Encargado
 });
 
@@ -48,8 +49,21 @@ Route::middleware(['auth', 'contador'])->group(function () {
 
 Route::middleware(['auth', 'supervisor'])->group(function () {
     Route::get('/supervisor', [SupervisorController::class, 'index'])->name('supervisor.home');
-    // Aquí puedes definir otras rutas específicas para el rol de Supervisor
+    // Ruta para que el supervisor pueda ver los productos
+    Route::get('/supervisor/productos', [ProductoController::class, 'index'])->name('supervisor.productos');
+    // Ruta para mostrar el formulario de creación de productos
+    Route::get('/supervisor/productos/crear', [ProductoController::class, 'create'])->name('supervisor.productos.crear');
+    // Ruta para manejar la creación de productos
+    Route::post('/supervisor/productos', [ProductoController::class, 'store'])->name('supervisor.productos.store');
+    // Ruta para mostrar el formulario de edición de productos
+    Route::get('/supervisor/productos/{producto}/editar', [ProductoController::class, 'edit'])->name('supervisor.productos.edit');
+    // Ruta para manejar la actualización de productos
+    Route::put('/supervisor/productos/{producto}', [ProductoController::class, 'update'])->name('supervisor.productos.update');
+    // Ruta para manejar la eliminación de productos
+    Route::delete('/supervisor/productos/{producto}', [ProductoController::class, 'destroy'])->name('supervisor.productos.destroy');
 });
+
+
 
 Route::middleware(['auth', 'vendedor'])->group(function () {
     Route::get('/vendedor', [VendedorController::class, 'index'])->name('vendedor.home');

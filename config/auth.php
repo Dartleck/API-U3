@@ -48,19 +48,19 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'contador' => [ // Nuevo guardia para el rol "supervisor"
+        'contador' => [ 
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'cliente' => [ // Nuevo guardia para el rol "supervisor"
+        'cliente' => [ 
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'encargado' => [ // Nuevo guardia para el rol "supervisor"
+        'encargado' => [ 
             'driver' => 'session',
             'provider' => 'users',
         ],
-        'vendedor' => [ // Nuevo guardia para el rol "supervisor"
+        'vendedor' => [ 
             'driver' => 'session',
             'provider' => 'users',
         ],

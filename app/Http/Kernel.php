@@ -77,6 +77,7 @@ class Kernel extends HttpKernel
         'contador' => \App\Http\Middleware\CheckContador::class,
         'supervisor' => \App\Http\Middleware\CheckSupervisor::class,
         'vendedor' => \App\Http\Middleware\CheckVendedor::class,
+        
     ];
     
     
