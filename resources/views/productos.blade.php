@@ -45,6 +45,7 @@
                                     <p class="card-text">Estado: {{ $producto->state }}</p>
                                 @endcan
 
+
                                 <!-- Mostrar las fotos del producto -->
                                 @foreach($producto->fotos as $foto)
                                     <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto del Producto" class="img-fluid">

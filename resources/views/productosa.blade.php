@@ -16,9 +16,9 @@
 
         <form id="searchForm" action="{{ route('productos') }}" method="GET" class="mb-3">
             <div class="form-group">
-                <label for="categoria_id">Buscar por categoría:</label>
+                <label for="categoria_id">Buscar por categoria:</label>
                 <select name="categoria_id" id="categoria" class="form-control" onchange="this.form.submit()">
-                    <option value="">Todas las categorías</option>
+                    <option value="">Todas las categorias</option>
                     @foreach($categorias as $categoria)
                         <option value="{{ $categoria->id }}" {{ request('categoria_id') == $categoria->id ? 'selected' : '' }}>{{ $categoria->name }}</option>
                     @endforeach
@@ -33,50 +33,47 @@
                     <h2>{{ $categoria->name }}</h2>
                     <div class="row">
                         @foreach($categoria->productos as $producto)
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ $producto->name }}</h5>
-                                        <p class="card-text">{{ $producto->description }}</p>
-                                        <p class="card-text">Precio: ${{ number_format($producto->price, 2, '.', ',') }}</p>
-                                        <p class="card-text">Stock: {{ $producto->stock }}</p>
-                                        <p class="card-text">Estado: {{ $producto->state }}</p> <!-- Mostrar el estado del producto -->
+                            @if($producto->state === 'aceptado')
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ $producto->name }}</h5>
+                                            <p class="card-text">{{ $producto->description }}</p>
+                                            <p class="card-text">Precio: ${{ number_format($producto->price, 2, '.', ',') }}</p>
+                                            <p class="card-text">Stock: {{ $producto->stock }}</p>
 
-                                        <!-- Mostrar las fotos del producto -->
-                                        @foreach($producto->fotos as $foto)
-                                            <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto del Producto" class="img-fluid">
-                                        @endforeach
+                                            <!-- Mostrar las fotos del producto -->
+                                            @foreach($producto->fotos as $foto)
+                                                <img src="{{ asset('storage/' . $foto->ruta) }}" alt="Foto del Producto" class="img-fluid">
+                                            @endforeach
 
-                                        <!-- Enlaces para editar el producto para el supervisor -->
-                                        @if(Auth::check() && Auth::user()->rol === 'Supervisor')
-                                            <a href="{{ route('Supervisor.productos.edit', $producto->id) }}" class="btn btn-warning mt-2">Editar</a>
-                                        @endif
+                                            <!-- Enlace para hacer una pregunta -->
+                                            <a href="{{ route('login') }}" class="btn btn-secondary mt-2">Hacer una pregunta</a>
 
-                                        <!-- Enlaces para ver preguntas -->
-                                        <a href="{{ route('login') }}" class="btn btn-warning">Ver Preguntas</a>
+                                            <!-- Botón y sección para preguntas y respuestas -->
+                                            <button class="btn btn-outline-secondary mt-2" onclick="togglePreguntas('{{ $producto->id }}')">Ver Preguntas</button>
+                                            <div id="preguntas{{ $producto->id }}" class="collapse">
+                                                <ul>
+                                                    @foreach($producto->preguntas as $pregunta)
+                                                        <li>
+                                                            <strong>Pregunta:</strong> {{ $pregunta->contenido }}
+                                                            <ul>
+                                                                @foreach($pregunta->respuestas as $respuesta)
+                                                                    <li><strong>Respuesta:</strong> {{ $respuesta->contenido }}</li>
+                                                                @endforeach
+                                                            </ul>
+                                                        </li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
 
-                                        <!-- Enlace para hacer una pregunta -->
-                                        <a href="{{ route('login') }}" class="btn btn-secondary mt-2">Hacer una pregunta</a>
-
-                                        <!-- Botón y sección para preguntas y respuestas -->
-                                        <button class="btn btn-outline-secondary mt-2" onclick="togglePreguntas('{{ $producto->id }}')">Ver Preguntas</button>
-                                        <div id="preguntas{{ $producto->id }}" class="collapse">
-                                            <ul>
-                                                @foreach($producto->preguntas as $pregunta)
-                                                    <li>
-                                                        <strong>Pregunta:</strong> {{ $pregunta->contenido }}
-                                                        <ul>
-                                                            @foreach($pregunta->respuestas as $respuesta)
-                                                                <li><strong>Respuesta:</strong> {{ $respuesta->contenido }}</li>
-                                                            @endforeach
-                                                        </ul>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
                                         </div>
+                                        <a href="{{ route('login') }}" class="btn btn-warning">Comprar</a>
+
+
                                     </div>
                                 </div>
-                            </div>
+                            @endif
                         @endforeach
                     </div>
                 </div>
